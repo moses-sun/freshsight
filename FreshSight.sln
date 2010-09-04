@@ -1,0 +1,25 @@
+﻿Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C# Express 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FS Lib", "FS Lib\FS Lib.csproj", "{E1302F16-C1FA-44A6-8B95-0A509291BEDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FS Store XML", "FS Store XML\FS Store XML.csproj", "{C3EE49F3-5E6D-4A37-B6AC-074616C327CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1302F16-C1FA-44A6-8B95-0A509291BEDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1302F16-C1FA-44A6-8B95-0A509291BEDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1302F16-C1FA-44A6-8B95-0A509291BEDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1302F16-C1FA-44A6-8B95-0A509291BEDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3EE49F3-5E6D-4A37-B6AC-074616C327CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3EE49F3-5E6D-4A37-B6AC-074616C327CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3EE49F3-5E6D-4A37-B6AC-074616C327CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3EE49F3-5E6D-4A37-B6AC-074616C327CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
