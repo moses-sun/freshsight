@@ -4,6 +4,7 @@
 */
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace ElasticLogic.FreshSight.Model
 {
@@ -20,7 +21,14 @@ namespace ElasticLogic.FreshSight.Model
 				{
 					if (!item.Visible)
 						return false;
+
 					item = item.Parent;
+
+					if (item != null)
+					{
+						if (!item.Expanded)
+							return false;
+					}
 				}
 				while (item != null);
 				return true;
@@ -32,7 +40,7 @@ namespace ElasticLogic.FreshSight.Model
 			get { return owner.GetItemParent(this); }
 		}
 
-		public int ParentId
+		internal int ParentId
 		{
 			get
 			{
@@ -41,11 +49,16 @@ namespace ElasticLogic.FreshSight.Model
 			}
 		}
 
-		public IEnumerable<Item> Childs
+		public ReadOnlyCollection<Item> Childs
 		{
 			get { return owner.GetItemChilds(this); }
 		}
 
+		public bool HasChilds
+		{
+			get { return Childs.Count > 0; }
+		}
+		
 		public Item Next
 		{
 			get { return owner.GetNextItem(this); }
@@ -56,9 +69,26 @@ namespace ElasticLogic.FreshSight.Model
 			get { return owner.GetPreviousItem(this); }
 		}
 
-		public int Index
+		internal int Index
 		{
 			get { return owner.GetItemIndex(this); }
+		}
+
+		public int Level
+		{
+			get
+			{
+				int n = 1;
+				Item item = this.Parent;
+
+				while (item != null)
+				{
+					n++;
+					item = item.Parent;
+				}
+
+				return n;
+			}
 		}
 
 		public void DeepExpand()
@@ -106,11 +136,26 @@ namespace ElasticLogic.FreshSight.Model
 			}
 		}
 
-		static public int GetId(Item item)
+		public void SetCheck(bool hasCheckBox, bool isChecked)
+		{
+			this.HasCheckbox = hasCheckBox;
+			this.Checked = isChecked;
+		}
+
+		public void SetIcons(string main, string overlay)
+		{
+			this.Icon = main;
+			this.OverlayIcon = overlay;
+		}
+
+	}
+
+	internal static class ItemExt
+	{
+		internal static int GetId(this Item item)
 		{
 			return item == null ? Values.NotSet : item.Id;
 		}
-
 	}
 
 }

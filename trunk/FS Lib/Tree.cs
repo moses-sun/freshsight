@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace ElasticLogic.FreshSight.Model
 {
@@ -17,7 +18,7 @@ namespace ElasticLogic.FreshSight.Model
 		private Dictionary<int, Item> items;
 		private Dictionary<int, ItemRelations> relations;
 		private List<string> presentCols; // item	metadata keys
-		private string initIconKey;
+		private string initIconKey = "";
 
 		private int id = Values.NotSet;
 		private Base owner;
@@ -25,7 +26,7 @@ namespace ElasticLogic.FreshSight.Model
 		private DateTime created;
 		private DateTime saved;
 
-		public static event EventHandler TitleChangeEvent;
+		internal static event EventHandler TitleChangeEvent;
 
 		#region Properties
 
@@ -40,7 +41,7 @@ namespace ElasticLogic.FreshSight.Model
 		}
 
 		// list of the first-level items
-		public IEnumerable<Item> Items
+		public ReadOnlyCollection<Item> Items
 		{
 			get { return GetItemChilds(null); }
 		}
@@ -193,7 +194,7 @@ namespace ElasticLogic.FreshSight.Model
 
 		internal Item GetItemParent(Item item)
 		{
-			int id = Item.GetId(item);
+			int id = item.GetId();
 			int parId = relations[id].Parent;
 
 			if (parId != Values.NotSet)
@@ -202,14 +203,17 @@ namespace ElasticLogic.FreshSight.Model
 				return null;
 		}
 
-		internal IEnumerable<Item> GetItemChilds(Item item)
+		internal ReadOnlyCollection<Item> GetItemChilds(Item item)
 		{
-			int id = Item.GetId(item);
+			int id = item.GetId();
+			List<Item> res = new List<Item>();
 
 			foreach (int child in relations[id].Childs)
 			{
-				yield return items[child];
+				res.Add(items[child]);
 			}
+
+			return res.AsReadOnly();
 		}
 
 		internal int GetItemIndex(Item item)
@@ -252,6 +256,11 @@ namespace ElasticLogic.FreshSight.Model
 
 		#region Item add
 
+		public Item AddFirstItem(string caption)
+		{
+			return AddSubItem(null, caption, parId => 0);
+		}
+
 		public Item AddSubItemFirst(Item parent, string caption)
 		{
 			return AddSubItem(parent, caption, parId => 0);
@@ -291,10 +300,11 @@ namespace ElasticLogic.FreshSight.Model
 			Item item = new Item(id, caption, this);
 			items.Add(id, item);
 
-			InitItem(item, parent);
+			if (parent != null)
+				InitItem(item, parent);
 
 			// relations
-			int parId = Item.GetId(parent);
+			int parId = parent.GetId();
 			int pos = Insert(parId);
 			relations[parId].Childs.Insert(pos, id);
 
@@ -470,7 +480,7 @@ namespace ElasticLogic.FreshSight.Model
 
 		public void SortItems(Item parent, bool reverse)
 		{
-			int parId = Item.GetId(parent);
+			int parId = parent.GetId();
 
 			relations[parId].Childs.Sort();
 			if (reverse)
