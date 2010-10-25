@@ -32,6 +32,10 @@ namespace ElasticLogic.FreshSight.Repository.Xml
 			attr = doc.CreateAttribute("s");
 			attr.Value = save.Striked.ToString();
 			style.Attributes.Append(attr);
+
+			attr = doc.CreateAttribute("font");
+			attr.Value = save.FontScale.ToString();
+			style.Attributes.Append(attr);
 		}
 
 		static internal TextStyle Load(XmlElement style)

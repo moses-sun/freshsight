@@ -17,18 +17,18 @@ namespace ElasticLogic.FreshSight.Model
 		private string comment = "";
 		private string content = "";
 
-		private bool hasCheckbox = true;
+		private bool hasCheckbox = false;
 		private bool _checked = false;
-		private string mainIconKey;
-		private string overlayIconKey;
+		private string mainIconKey = "";
+		private string overlayIconKey = "";
 
 		private int id = Values.NotSet;
 		private Tree owner;
 		private DateTime created;
 		private DateTime saved;
 
-		public static event KeyAddHandler KeyAddEvent;
-		public static event EventHandler CaptionChangeEvent;
+		internal static event KeyAddHandler KeyAddEvent;
+		internal static event EventHandler CaptionChangeEvent;
 
 		#region Properties
 
@@ -69,9 +69,9 @@ namespace ElasticLogic.FreshSight.Model
 			private set;
 		}
 
-		public bool Expanded { get; set; }
+		public bool Expanded { get; private set; }
 
-		public bool Visible { get; set; }
+		public bool Visible { get; private set; }
 
 		public bool HasCheckbox
 		{
@@ -99,7 +99,7 @@ namespace ElasticLogic.FreshSight.Model
 			get { return mainIconKey; }
 			set
 			{
-				mainIconKey = value.Trim() == string.Empty ? null : value;
+				mainIconKey = value.Trim();
 			}
 		}
 
@@ -108,7 +108,7 @@ namespace ElasticLogic.FreshSight.Model
 			get { return overlayIconKey; }
 			set
 			{
-				overlayIconKey = value.Trim() == string.Empty ? null : value;
+				overlayIconKey = value.Trim();
 			}
 		}
 
@@ -203,7 +203,23 @@ namespace ElasticLogic.FreshSight.Model
 		{
 			if (Expanded)
 			{
-				Expanded = false;
+				if (HasChilds)
+				{
+					Expanded = false;
+					return true;
+				}
+				else
+					return false;
+			}
+			else
+				return false;
+		}
+
+		public bool ToggleExpand()
+		{
+			if (HasChilds)
+			{
+				Expanded = !Expanded;
 				return true;
 			}
 			else
@@ -267,8 +283,8 @@ namespace ElasticLogic.FreshSight.Model
 
 		public void EmptyIcon()
 		{
-			mainIconKey = null;
-			overlayIconKey = null;
+			mainIconKey = string.Empty;
+			overlayIconKey = string.Empty;
 		}
 
 		public void EmptyOverlayIcon()
@@ -307,12 +323,12 @@ namespace ElasticLogic.FreshSight.Model
 
 		#region Sub-types
 
-		public class KeyAddEventArgs : EventArgs
+		internal class KeyAddEventArgs : EventArgs
 		{
 			public string Key { get; set; }
 		}
 
-		public delegate void KeyAddHandler(object source, KeyAddEventArgs args);
+		internal delegate void KeyAddHandler(object source, KeyAddEventArgs args);
 
 		#endregion
 
