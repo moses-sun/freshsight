@@ -4,7 +4,7 @@
 */
 
 using System;
-using System.Xml;
+using System.Xml.Linq;
 using ElasticLogic.FreshSight.Model;
 
 namespace ElasticLogic.FreshSight.Repository.Xml
@@ -12,33 +12,25 @@ namespace ElasticLogic.FreshSight.Repository.Xml
 
 	static class MetaXml
 	{
-		static internal void Save(Meta save, XmlElement metadata)
+		static internal XElement Save(Meta save)
 		{
-			XmlDocument doc = metadata.OwnerDocument;
-			XmlAttribute attr;
-
-			// record-
-			XmlElement record;
+			// metadata-
+			XElement metadata = new XElement("metadata");
 
 			foreach (string key in save.Keys)
 			{
-				record = doc.CreateElement("record");
-				record.Value = save[key].Text;
-				metadata.AppendChild(record);
-
-				// -name
-				attr = doc.CreateAttribute("name");
-				attr.Value = key;
-				record.Attributes.Append(attr);
-
-				// -kind
-				attr = doc.CreateAttribute("kind");
-				attr.Value = save[key].Kind.ToString();
-				record.Attributes.Append(attr);
+				metadata.Add(
+					new XElement("record", save[key].Text, // record-
+						new XAttribute("name", key), // -name
+						new XAttribute("kind", save[key].Kind) // -kind
+					)
+				);
 			}
+
+			return metadata;
 		}
 
-		static internal Meta Load(XmlElement metadata)
+		static internal Meta Load(XElement metadata)
 		{
 			throw new NotImplementedException();
 		}

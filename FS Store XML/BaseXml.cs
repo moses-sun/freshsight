@@ -4,7 +4,7 @@
 */
 
 using System;
-using System.Xml;
+using System.Xml.Linq;
 using ElasticLogic.FreshSight.Model;
 
 namespace ElasticLogic.FreshSight.Repository.Xml
@@ -16,76 +16,66 @@ namespace ElasticLogic.FreshSight.Repository.Xml
 		{
 			save.DoSaving();
 
-			// content
-			XmlDocument cont = new XmlDocument();
-			cont.PreserveWhitespace = false;
+			// base
+			XDocument all = new XDocument(
+				new XDeclaration("1.0", "UTF-8", null),
+				SaveBase(save)
+			);
 
-			XmlDeclaration decl = cont.CreateXmlDeclaration("1.0", "UTF-8", null);
-			cont.AppendChild(decl);
+			string path = System.IO.Path.Combine(folder, "base.xml");
+			all.Save(path, SaveOptions.OmitDuplicateNamespaces);
 
-			XmlElement contents = cont.CreateElement("contents");
-			cont.AppendChild(contents);
+			// contents
+			XDocument contents = new XDocument(
+				new XDeclaration("1.0", "UTF-8", null),
+				SaveContents(save)
+			);
 
-			// manage
-			XmlDocument all = new XmlDocument();
-			all.PreserveWhitespace = false;
-
-			decl = all.CreateXmlDeclaration("1.0", "UTF-8", null);
-			all.AppendChild(decl);
-
-			XmlElement _base = all.CreateElement("base");
-			all.AppendChild(_base);
-
-			SaveAll(save, _base, contents);
-
-			// saving
-			folder = folder.TrimEnd(new[] { '\\' });
-			all.Save(folder + "\\base.xml");
-			cont.Save(folder + "\\content.xml");
+			path = System.IO.Path.Combine(folder, "content.xml");
+			contents.Save(path, SaveOptions.OmitDuplicateNamespaces);
 		}
 
-		static private void SaveAll(Base save, XmlElement _base, XmlElement contents)
+		static private XElement SaveBase(Base save)
 		{
-			XmlDocument doc = _base.OwnerDocument;
-			XmlAttribute attr;
+			XElement root = new XElement("base");
 
-			// id
-			attr = doc.CreateAttribute("id");
-			attr.Value = save.Id.ToString();
-			_base.Attributes.Append(attr);
+			root.Add(
+				new XAttribute("id", save.Id), // id
+				new XAttribute("version", Base.Version), // version
+				new XElement("date", // date-
+					new XAttribute("created", save.Created.Ticks), // -created
+					new XAttribute("saved", save.Saved.Ticks) // -saved
+				),
+				SaveTrees(save)
+			);
 
-			// version
-			attr = doc.CreateAttribute("version");
-			attr.Value = Base.Version;
-			_base.Attributes.Append(attr);
+			return root;
+		}
 
-			// date-
-			XmlElement date = doc.CreateElement("date");
-			_base.AppendChild(date);
-
-			// -created
-			attr = doc.CreateAttribute("created");
-			attr.Value = save.Created.Ticks.ToString();
-			date.Attributes.Append(attr);
-
-			// -saved
-			attr = doc.CreateAttribute("saved");
-			attr.Value = save.Saved.Ticks.ToString();
-			date.Attributes.Append(attr);
-
+		static private XElement SaveTrees(Base save)
+		{
 			// trees-
-			XmlElement trees = doc.CreateElement("trees");
-			_base.AppendChild(trees);
+			XElement trees = new XElement("trees");
 
-			// -tree
-			XmlElement tree;
-
-			foreach (Tree val in save.Trees)
+			foreach (Tree tree in save.Trees)
 			{
-				tree = doc.CreateElement("tree");
-				TreeXml.Save(val, tree, contents);
-				trees.AppendChild(tree);
+				trees.Add(TreeXml.Save(tree)); // -tree
 			}
+
+			return trees;
+		}
+
+		static private XElement SaveContents(Base save)
+		{
+			// contents-
+			XElement contents = new XElement("contents");
+
+			foreach (Tree tree in save.Trees)
+			{
+				TreeXml.SaveContents(tree, contents);
+			}
+
+			return contents;
 		}
 
 		static public Base Load(string folder)
