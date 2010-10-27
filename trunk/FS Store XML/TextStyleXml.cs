@@ -4,7 +4,7 @@
 */
 
 using System;
-using System.Xml;
+using System.Xml.Linq;
 using ElasticLogic.FreshSight.Model;
 
 namespace ElasticLogic.FreshSight.Repository.Xml
@@ -12,33 +12,21 @@ namespace ElasticLogic.FreshSight.Repository.Xml
 
 	static class TextStyleXml
 	{
-		static internal void Save(TextStyle save, XmlElement style)
+		static internal XElement Save(TextStyle save)
 		{
-			XmlDocument doc = style.OwnerDocument;
-			XmlAttribute attr;
-
-			attr = doc.CreateAttribute("b");
-			attr.Value = save.Bold.ToString();
-			style.Attributes.Append(attr);
-
-			attr = doc.CreateAttribute("i");
-			attr.Value = save.Italic.ToString();
-			style.Attributes.Append(attr);
-
-			attr = doc.CreateAttribute("u");
-			attr.Value = save.Underlined.ToString();
-			style.Attributes.Append(attr);
-
-			attr = doc.CreateAttribute("s");
-			attr.Value = save.Striked.ToString();
-			style.Attributes.Append(attr);
-
-			attr = doc.CreateAttribute("font");
-			attr.Value = save.FontScale.ToString();
-			style.Attributes.Append(attr);
+			return
+				new XElement("style",
+					new XAttribute("b", save.Bold),
+					new XAttribute("i", save.Italic),
+					new XAttribute("u", save.Underlined),
+					new XAttribute("s", save.Striked),
+					new XElement("font",
+						new XAttribute("scale", save.FontScale)
+					)
+				);
 		}
 
-		static internal TextStyle Load(XmlElement style)
+		static internal TextStyle Load(XElement style)
 		{
 			throw new NotImplementedException();
 		}

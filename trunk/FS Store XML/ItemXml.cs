@@ -4,7 +4,7 @@
 */
 
 using System;
-using System.Xml;
+using System.Xml.Linq;
 using ElasticLogic.FreshSight.Model;
 
 namespace ElasticLogic.FreshSight.Repository.Xml
@@ -12,175 +12,95 @@ namespace ElasticLogic.FreshSight.Repository.Xml
 
 	static class ItemXml
 	{
-		static internal void Save(Item save, XmlElement item, XmlElement contents)
+		static internal XElement Save(Item save)
 		{
 			save.DoSaving();
+			XElement item = new XElement("item");
 
-			XmlDocument doc = item.OwnerDocument;
-			XmlAttribute attr;
+			item.Add(
+				new XAttribute("id", save.Id), // id
+				new XAttribute("version", Item.Version), // version
+				new XElement("date", // date -
+					new XAttribute("create", save.Created.Ticks), // -create
+					new XAttribute("saved", save.Saved.Ticks) // -saved
+				),
+				new XElement("caption", save.Caption, // caption-
+					TextStyleXml.Save(save.CaptionStyle) // -style
+				),
+				new XElement("comment", save.Comment, // comment-
+					TextStyleXml.Save(save.CommentStyle) // -style
+				),
+				new XElement("check", // check-
+					new XAttribute("has", save.HasCheckbox), // -hasCheckbox
+					new XAttribute("checked", save.Checked) // -checked
+				),
+				new XElement("icons", // icons-
+					new XAttribute("main", save.Icon), // -main
+					new XAttribute("overlay", save.OverlayIcon) // -overlay
+				),
+				new XElement("state", // state-
+					new XAttribute("expanded", save.Expanded), // -expanded
+					new XAttribute("visible", save.Visible) // -visible
+				),
+				new XElement("link", // link-
+					new XAttribute("tree", save.Link) // -tree
+				),
+				SaveFiles(save), // files
+				MetaXml.Save(save.Metadata), // metadata
+				SaveChilds(save) // childs
+			);
 
-			// id
-			attr = doc.CreateAttribute("id");
-			attr.Value = save.Id.ToString();
-			item.Attributes.Append(attr);
+			return item;
+		}
 
-			// version
-			attr = doc.CreateAttribute("version");
-			attr.Value = Item.Version;
-			item.Attributes.Append(attr);
-
-			// date-
-			XmlElement date = doc.CreateElement("date");
-			item.AppendChild(date);
-
-			// -create
-			attr = doc.CreateAttribute("create");
-			attr.Value = save.Created.Ticks.ToString();
-			date.Attributes.Append(attr);
-
-			// -saved
-			attr = doc.CreateAttribute("saved");
-			attr.Value = save.Saved.Ticks.ToString();
-			date.Attributes.Append(attr);
-
-			// caption-
-			XmlElement caption = doc.CreateElement("caption");
-			caption.Value = save.Caption;
-			item.AppendChild(caption);
-
-			// -caption style
-			XmlElement style = doc.CreateElement("style");
-			TextStyleXml.Save(save.CaptionStyle, style);
-			caption.AppendChild(style);
-
-			// comment-
-			XmlElement comment = doc.CreateElement("comment");
-			comment.Value = save.Comment;
-			item.AppendChild(comment);
-
-			// -comment style
-			style = doc.CreateElement("style");
-			TextStyleXml.Save(save.CommentStyle, style);
-			comment.AppendChild(style);
-
-			// check-
-			XmlElement check = doc.CreateElement("check");
-			item.AppendChild(check);
-
-			// -hasCheckbox
-			attr = doc.CreateAttribute("has");
-			attr.Value = save.HasCheckbox.ToString();
-			check.Attributes.Append(attr);
-
-			// -checked
-			attr = doc.CreateAttribute("checked");
-			attr.Value = save.Checked.ToString();
-			check.Attributes.Append(attr);
-
-			// icons-
-			XmlElement icons = doc.CreateElement("icons");
-			item.AppendChild(icons);
-
-			// -main icon
-			attr = doc.CreateAttribute("main");
-			attr.Value = save.Icon;
-			icons.Attributes.Append(attr);
-
-			// -overlay icon
-			attr = doc.CreateAttribute("overlay");
-			attr.Value = save.OverlayIcon;
-			icons.Attributes.Append(attr);
-
-			// state-
-			XmlElement state = doc.CreateElement("state");
-			item.AppendChild(state);
-
-			// -expanded
-			attr = doc.CreateAttribute("expanded");
-			attr.Value = save.Expanded.ToString();
-			state.Attributes.Append(attr);
-
-			// -visible
-			attr = doc.CreateAttribute("visible");
-			attr.Value = save.Visible.ToString();
-			state.Attributes.Append(attr);
-
-			// link-
-			XmlElement link = doc.CreateElement("link");
-			item.AppendChild(link);
-
-			// -tree
-			attr = doc.CreateAttribute("tree");
-			attr.Value = save.Link.ToString();
-			link.Attributes.Append(attr);
-
-			// files-
-			XmlElement files = doc.CreateElement("files");
-			item.AppendChild(files);
-
-			// -file id
-			XmlElement file;
-
-			foreach (int id in save.Files)
-			{
-				file = doc.CreateElement("file");
-				files.AppendChild(file);
-
-				attr = doc.CreateAttribute("id");
-				attr.Value = id.ToString();
-				file.Attributes.Append(attr);
-			}
-
-			// metadata
-			XmlElement metadata = doc.CreateElement("metadata");
-			MetaXml.Save(save.Metadata, metadata);
-			item.AppendChild(metadata);
-
-			// content
-			SaveContent(save, contents);
-
-			// childs-
-			XmlElement childs = doc.CreateElement("childs");
-			item.AppendChild(childs);
-
-			// -item
-			XmlElement child;
+		static internal void SaveContents(Item save, XElement contents)
+		{
+			contents.Add(
+				new XElement("content", save.Content, // content-
+					new XAttribute("base", save.Tree.Base.Id), // -base id
+					new XAttribute("tree", save.Tree), // -tree id
+					new XAttribute("item", save.Id) // -item id
+				)
+			);
 
 			foreach (Item val in save.Childs)
 			{
-				child = doc.CreateElement("item");
-				ItemXml.Save(val, child, contents);
-				childs.AppendChild(child);
+				SaveContents(val, contents);
 			}
 		}
 
-		static private void SaveContent(Item save, XmlElement contents)
+		static private XElement SaveFiles(Item save)
 		{
-			XmlDocument doc = contents.OwnerDocument;
-			XmlAttribute attr;
+			// files-
+			XElement files = new XElement("files");
 
-			// content-
-			XmlElement cont = doc.CreateElement("content");
-			cont.Value = save.Content;
-			contents.AppendChild(cont);
+			// -file id
+			foreach (int id in save.Files)
+			{
+				files.Add(
+					new XElement("file",
+						new XAttribute("id", id)
+					)
+				);
+			}
 
-			// -base id
-			attr = doc.CreateAttribute("base");
-			attr.Value = save.Tree.Base.Id.ToString();
-			cont.Attributes.Append(attr);
-
-			// -tree id
-			attr = doc.CreateAttribute("tree");
-			attr.Value = save.Tree.ToString();
-			cont.Attributes.Append(attr);
-
-			// -item id
-			attr = doc.CreateAttribute("item");
-			attr.Value = save.Id.ToString();
-			cont.Attributes.Append(attr);
+			return files;
 		}
 
-		static internal Item Load(XmlElement items)
+		static private XElement SaveChilds(Item save)
+		{
+			// childs-
+			XElement childs = new XElement("childs");
+
+			foreach (Item item in save.Childs)
+			{
+				childs.Add(ItemXml.Save(item)); // -item
+			}
+
+			return childs;
+		}
+
+		static internal Item Load(XElement items)
 		{
 			throw new NotImplementedException();
 		}
