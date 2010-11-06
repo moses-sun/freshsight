@@ -49,14 +49,14 @@ namespace ElasticLogic.FreshSight.Model
 			}
 		}
 
-		public ReadOnlyCollection<Item> Childs
+		public ReadOnlyCollection<Item> Children
 		{
 			get { return owner.GetItemChilds(this); }
 		}
 
-		public bool HasChilds
+		public bool HasChildren
 		{
-			get { return Childs.Count > 0; }
+			get { return Children.Count > 0; }
 		}
 		
 		public Item Next
@@ -95,7 +95,7 @@ namespace ElasticLogic.FreshSight.Model
 		{
 			Expand();
 
-			foreach (Item child in Childs)
+			foreach (Item child in Children)
 				child.DeepExpand();
 		}
 
@@ -103,7 +103,7 @@ namespace ElasticLogic.FreshSight.Model
 		{
 			Collapse();
 
-			foreach (Item child in Childs)
+			foreach (Item child in Children)
 				child.DeepCollapse();
 		}
 
@@ -111,7 +111,7 @@ namespace ElasticLogic.FreshSight.Model
 		{
 			Check();
 
-			foreach (Item child in Childs)
+			foreach (Item child in Children)
 				child.DeepCheck();
 		}
 
@@ -119,7 +119,7 @@ namespace ElasticLogic.FreshSight.Model
 		{
 			Uncheck();
 
-			foreach (Item child in Childs)
+			foreach (Item child in Children)
 				child.DeepUncheck();
 		}
 

@@ -1,0 +1,58 @@
+﻿<Application x:Class="ElasticLogic.FreshSight.GUI.WPF.App"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:loc="clr-namespace:ElasticLogic.FreshSight.GUI.WPF"
+	StartupUri="MainWindow.xaml">
+    
+	<Application.Resources>
+
+		<!-- Converters -->
+		<loc:Bool2Visibility x:Key="Bool2Visibility" />
+		<loc:IconConverter x:Key="IconConverter" />
+		<loc:IconVisibility x:Key="IconVisibility" />
+
+		<!-- Caption -->
+		<DataTemplate x:Key="Caption">
+			<StackPanel Orientation="Horizontal">
+				<CheckBox Visibility="{Binding Path=HasCheckbox, Converter={StaticResource Bool2Visibility}}"
+					IsChecked="{Binding Path=Checked, Mode=TwoWay}" IsTabStop="False" Focusable="False"
+					VerticalAlignment="Center" Margin="6,3,0,3"/>
+				<Image VerticalAlignment="Center" Margin="4,3,0,3">
+					<Image.Source>
+						<MultiBinding Converter="{StaticResource IconConverter}">
+							<Binding Path="Icon" />
+							<Binding Path="OverlayIcon" />
+						</MultiBinding>
+					</Image.Source>
+					<Image.Visibility>
+						<MultiBinding Converter="{StaticResource IconVisibility}">
+							<Binding Path="Icon" />
+							<Binding Path="OverlayIcon" />
+						</MultiBinding>
+					</Image.Visibility>
+				</Image>
+				<TextBlock Text="{Binding Path=Caption}" VerticalAlignment="Center" Margin="4,3,6,3" />
+			</StackPanel>
+		</DataTemplate>
+
+		<Style x:Key="CommentStyle">
+			<Setter Property="TextBlock.Text" Value="{Binding Path=Comment}" />
+			<Setter Property="TextBox.Text" Value="{Binding Path=Comment}" />
+			<Setter Property="Control.VerticalAlignment" Value="Center" />
+			<Setter Property="Control.Margin" Value="6,3,6,3" />
+		</Style>
+
+		<!-- Comment -->
+		<DataTemplate x:Key="Comment">
+			<Grid MouseLeftButtonDown="Column_MouseDown">
+				<TextBlock Uid="label" Visibility="Visible"
+					Style="{StaticResource CommentStyle}" />
+				<TextBox Uid="editor" Visibility="Collapsed"
+					LostFocus="Editor_LostFocus"
+					Style="{StaticResource CommentStyle}" />
+			</Grid>
+		</DataTemplate>
+
+	</Application.Resources>
+	
+</Application>
