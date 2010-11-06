@@ -362,7 +362,7 @@ namespace ElasticLogic.FreshSight.Model
 
 			relations[parId].Childs.Insert(pos, id);
 
-			foreach (Item child in item.Childs)
+			foreach (Item child in item.Children)
 			{
 				pos = 0;
 				DeepCloneStep(child, id, pos++);
@@ -496,7 +496,7 @@ namespace ElasticLogic.FreshSight.Model
 		{
 			SortItems(parent, reverse);
 
-			foreach (Item item in parent.Childs)
+			foreach (Item item in parent.Children)
 				DeepSortItems(item, reverse);
 		}
 

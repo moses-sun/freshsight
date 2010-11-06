@@ -203,7 +203,7 @@ namespace ElasticLogic.FreshSight.Model
 		{
 			if (Expanded)
 			{
-				if (HasChilds)
+				if (HasChildren)
 				{
 					Expanded = false;
 					return true;
@@ -217,7 +217,7 @@ namespace ElasticLogic.FreshSight.Model
 
 		public bool ToggleExpand()
 		{
-			if (HasChilds)
+			if (HasChildren)
 			{
 				Expanded = !Expanded;
 				return true;

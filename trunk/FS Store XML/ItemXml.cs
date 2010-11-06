@@ -63,7 +63,7 @@ namespace ElasticLogic.FreshSight.Repository.Xml
 				)
 			);
 
-			foreach (Item val in save.Childs)
+			foreach (Item val in save.Children)
 			{
 				SaveContents(val, contents);
 			}
@@ -92,7 +92,7 @@ namespace ElasticLogic.FreshSight.Repository.Xml
 			// childs-
 			XElement childs = new XElement("childs");
 
-			foreach (Item item in save.Childs)
+			foreach (Item item in save.Children)
 			{
 				childs.Add(ItemXml.Save(item)); // -item
 			}

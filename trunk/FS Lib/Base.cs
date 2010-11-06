@@ -96,7 +96,7 @@ namespace ElasticLogic.FreshSight.Model
 					tree.LinkTree = Values.NotSet;
 				}
 
-				DeleteItemsLink(item.Childs);
+				DeleteItemsLink(item.Children);
 			}
 		}
 
