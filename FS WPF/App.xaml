@@ -10,14 +10,61 @@
 		<loc:Bool2Visibility x:Key="Bool2Visibility" />
 		<loc:IconConverter x:Key="IconConverter" />
 		<loc:IconVisibility x:Key="IconVisibility" />
+		<loc:TextBold x:Key="TextBold" />
+		<loc:TextItalic x:Key="TextItalic" />
+		<loc:TextLines x:Key="TextLines" />
+		<loc:TextSize x:Key="TextSize" />
 
+		<Style x:Key="CaptionBlock" TargetType="TextBlock">
+			<Setter Property="VerticalAlignment" Value="Center" />
+			<Setter Property="Margin" Value="4,3,6,3" />
+			<Setter Property="Text" Value="{Binding Path=Caption}" />
+
+			<Setter Property="FontSize"
+				Value="{Binding Path=CaptionStyle.FontScale, Converter={StaticResource TextSize}, Mode=TwoWay}" />
+			<Setter Property="FontWeight"
+				Value="{Binding Path=CaptionStyle.Bold, Converter={StaticResource TextBold}, Mode=TwoWay}" />
+			<Setter Property="FontStyle"
+				Value="{Binding Path=CaptionStyle.Italic, Converter={StaticResource TextItalic}, Mode=TwoWay}" />
+			<Setter Property="TextDecorations">
+				<Setter.Value>
+					<MultiBinding Converter="{StaticResource TextLines}" Mode="TwoWay">
+						<Binding Path="CaptionStyle.Underlined" />
+						<Binding Path="CaptionStyle.Striked" />
+					</MultiBinding>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="CaptionBox" TargetType="TextBox">
+			<Setter Property="VerticalAlignment" Value="Center" />
+			<Setter Property="Margin" Value="2,0,3,0" />
+			<Setter Property="Text" Value="{Binding Path=Caption}" />
+
+			<Setter Property="FontSize"
+				Value="{Binding Path=CaptionStyle.FontScale, Converter={StaticResource TextSize}, Mode=TwoWay}" />
+			<Setter Property="FontWeight"
+				Value="{Binding Path=CaptionStyle.Bold, Converter={StaticResource TextBold}, Mode=TwoWay}" />
+			<Setter Property="FontStyle"
+				Value="{Binding Path=CaptionStyle.Italic, Converter={StaticResource TextItalic}, Mode=TwoWay}" />
+			<Setter Property="TextDecorations">
+				<Setter.Value>
+					<MultiBinding Converter="{StaticResource TextLines}" Mode="TwoWay">
+						<Binding Path="CaptionStyle.Underlined" />
+						<Binding Path="CaptionStyle.Striked" />
+					</MultiBinding>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		
 		<!-- Caption -->
 		<DataTemplate x:Key="Caption">
-			<StackPanel Orientation="Horizontal">
-				<CheckBox Visibility="{Binding Path=HasCheckbox, Converter={StaticResource Bool2Visibility}}"
+			<DockPanel LastChildFill="True">
+				<CheckBox DockPanel.Dock="Left"
+					Visibility="{Binding Path=HasCheckbox, Converter={StaticResource Bool2Visibility}}"
 					IsChecked="{Binding Path=Checked, Mode=TwoWay}" IsTabStop="False" Focusable="False"
-					VerticalAlignment="Center" Margin="6,3,0,3"/>
-				<Image VerticalAlignment="Center" Margin="4,3,0,3">
+					VerticalAlignment="Center" Margin="0,3,0,3"/>
+				<Image DockPanel.Dock="Left" VerticalAlignment="Center" Margin="4,3,0,3">
 					<Image.Source>
 						<MultiBinding Converter="{StaticResource IconConverter}">
 							<Binding Path="Icon" />
@@ -31,25 +78,66 @@
 						</MultiBinding>
 					</Image.Visibility>
 				</Image>
-				<TextBlock Text="{Binding Path=Caption}" VerticalAlignment="Center" Margin="4,3,6,3" />
-			</StackPanel>
+				<Grid MouseLeftButtonDown="Cell_MouseDown">
+					<TextBlock Uid="label" Visibility="Visible"
+						Style="{StaticResource CaptionBlock}" />
+					<TextBox Uid="editor" Visibility="Collapsed"
+						LostFocus="Editor_LostFocus" KeyDown="Editor_KeyDown"
+						Style="{StaticResource CaptionBox}" />
+				</Grid>
+			</DockPanel>
 		</DataTemplate>
 
-		<Style x:Key="CommentStyle">
-			<Setter Property="TextBlock.Text" Value="{Binding Path=Comment}" />
-			<Setter Property="TextBox.Text" Value="{Binding Path=Comment}" />
-			<Setter Property="Control.VerticalAlignment" Value="Center" />
-			<Setter Property="Control.Margin" Value="6,3,6,3" />
+		<Style x:Key="CommentBlock" TargetType="TextBlock">
+			<Setter Property="VerticalAlignment" Value="Center" />
+			<Setter Property="Margin" Value="6,3,6,3" />
+			<Setter Property="Text" Value="{Binding Path=Comment}" />
+
+			<Setter Property="FontSize"
+				Value="{Binding Path=CommentStyle.FontScale, Converter={StaticResource TextSize}, Mode=TwoWay}" />
+			<Setter Property="FontWeight"
+				Value="{Binding Path=CommentStyle.Bold, Converter={StaticResource TextBold}, Mode=TwoWay}" />
+			<Setter Property="FontStyle"
+				Value="{Binding Path=CommentStyle.Italic, Converter={StaticResource TextItalic}, Mode=TwoWay}" />
+			<Setter Property="TextDecorations">
+				<Setter.Value>
+					<MultiBinding Converter="{StaticResource TextLines}" Mode="TwoWay">
+						<Binding Path="CommentStyle.Underlined" />
+						<Binding Path="CommentStyle.Striked" />
+					</MultiBinding>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="CommentBox" TargetType="TextBox">
+			<Setter Property="VerticalAlignment" Value="Center" />
+			<Setter Property="Margin" Value="3,0,3,0" />
+			<Setter Property="Text" Value="{Binding Path=Comment}" />
+
+			<Setter Property="FontSize"
+				Value="{Binding Path=CommentStyle.FontScale, Converter={StaticResource TextSize}, Mode=TwoWay}" />
+			<Setter Property="FontWeight"
+				Value="{Binding Path=CommentStyle.Bold, Converter={StaticResource TextBold}, Mode=TwoWay}" />
+			<Setter Property="FontStyle"
+				Value="{Binding Path=CommentStyle.Italic, Converter={StaticResource TextItalic}, Mode=TwoWay}" />
+			<Setter Property="TextDecorations">
+				<Setter.Value>
+					<MultiBinding Converter="{StaticResource TextLines}" Mode="TwoWay">
+						<Binding Path="CommentStyle.Underlined" />
+						<Binding Path="CommentStyle.Striked" />
+					</MultiBinding>
+				</Setter.Value>
+			</Setter>
 		</Style>
 
 		<!-- Comment -->
 		<DataTemplate x:Key="Comment">
-			<Grid MouseLeftButtonDown="Column_MouseDown">
+			<Grid MouseLeftButtonDown="Cell_MouseDown">
 				<TextBlock Uid="label" Visibility="Visible"
-					Style="{StaticResource CommentStyle}" />
+					Style="{StaticResource CommentBlock}" />
 				<TextBox Uid="editor" Visibility="Collapsed"
-					LostFocus="Editor_LostFocus"
-					Style="{StaticResource CommentStyle}" />
+					LostFocus="Editor_LostFocus" KeyDown="Editor_KeyDown"
+					Style="{StaticResource CommentBox}" />
 			</Grid>
 		</DataTemplate>
 

@@ -153,8 +153,8 @@ namespace ElasticLogic.FreshSight.Model
 			Visible = true;
 			Link = Values.NotSet;
 
-			CaptionStyle = new TextStyle();
-			CommentStyle = new TextStyle();
+			CaptionStyle = new TextStyle() { FontScale = 1.0 };
+			CommentStyle = new TextStyle() { FontScale = 1.0 };
 
 			created = DateTime.Now;
 			saved = created;
