@@ -9,22 +9,23 @@ using System.Globalization;
 namespace ElasticLogic.FreshSight.GUI.WPF
 {
 
-	[ValueConversion(typeof(bool), typeof(Visibility))]
-	class Bool2Visibility : IValueConverter
+	[ValueConversion(typeof(double), typeof(double))]
+	class TextSize : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			bool src = (bool)value;
-			if (src)
-				return Visibility.Visible;
-			else
-				return Visibility.Collapsed;
+			double scale = (double)value;
+			double std = SystemFonts.CaptionFontSize;
+
+			return std * scale;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			Visibility vis = (Visibility)value;
-			return (vis == Visibility.Visible);
+			double size = (double)value;
+			double std = SystemFonts.CaptionFontSize;
+
+			return size / std;
 		}
 	}
 

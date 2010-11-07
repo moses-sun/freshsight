@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ElasticLogic.FreshSight.Model;
+using ElasticLogic.FreshSight.Repository.Xml;
 using Ricciolo.Controls;
 
 namespace ElasticLogic.FreshSight.GUI.WPF
@@ -19,6 +20,8 @@ namespace ElasticLogic.FreshSight.GUI.WPF
 
 	public partial class MainWindow : Window
 	{
+		private Base db;
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -26,9 +29,14 @@ namespace ElasticLogic.FreshSight.GUI.WPF
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			Base db = LoadBase();
+			db = LoadBase();
 
 			Base2Tabs(db, Tabs);
+		}
+
+		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			//BaseXml.Save(db, @"d:\TEST");
 		}
 
 		// faking Base loading
@@ -100,8 +108,22 @@ namespace ElasticLogic.FreshSight.GUI.WPF
 				branch.Header = item;
 				branches.Add(branch);
 
+				branch.Expanded += delegate(object sender, RoutedEventArgs e) { (branch.Header as Item).Expand(); };
+				branch.Collapsed += delegate(object sender, RoutedEventArgs e) { (branch.Header as Item).Collapse(); };
+				branch.IsVisibleChanged += delegate(object sender, DependencyPropertyChangedEventArgs e)
+				{
+					if (branch.Visibility == Visibility.Visible)
+						(branch.Header as Item).Show();
+					else
+						(branch.Header as Item).Hide();
+				};
+				//branch.Visibility = item.Visible ? Visibility.Visible : Visibility.Collapsed;
+
 				if (item.HasChildren)
+				{
 					Item2Branch(item.Children, branch.Items);
+					branch.IsExpanded = item.Expanded;
+				}
 			}
 		}
 

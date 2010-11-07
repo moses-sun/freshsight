@@ -58,7 +58,7 @@ namespace ElasticLogic.FreshSight.Repository.Xml
 			contents.Add(
 				new XElement("content", save.Content, // content-
 					new XAttribute("base", save.Tree.Base.Id), // -base id
-					new XAttribute("tree", save.Tree), // -tree id
+					new XAttribute("tree", save.Tree.Id), // -tree id
 					new XAttribute("item", save.Id) // -item id
 				)
 			);
@@ -90,7 +90,7 @@ namespace ElasticLogic.FreshSight.Repository.Xml
 		static private XElement SaveChilds(Item save)
 		{
 			// childs-
-			XElement childs = new XElement("childs");
+			XElement childs = new XElement("children");
 
 			foreach (Item item in save.Children)
 			{

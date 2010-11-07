@@ -13,13 +13,13 @@ namespace ElasticLogic.FreshSight.GUI.WPF
 	public partial class App : Application
 	{
 
-		private void Column_MouseDown(object sender, MouseButtonEventArgs e)
+		private void Cell_MouseDown(object sender, MouseButtonEventArgs e)
 		{
 			if (e.ClickCount > 1)
 			{
-				Panel column = (Panel)sender;
-				FrameworkElement label = (FrameworkElement)column.Children[0];
-				TextBox editor = (TextBox)column.Children[1];
+				Panel cell = (Panel)sender;
+				FrameworkElement label = (FrameworkElement)cell.Children[0];
+				TextBox editor = (TextBox)cell.Children[1];
 
 				label.Visibility = Visibility.Collapsed;
 				editor.Visibility = Visibility.Visible;
@@ -34,11 +34,33 @@ namespace ElasticLogic.FreshSight.GUI.WPF
 		private void Editor_LostFocus(object sender, RoutedEventArgs e)
 		{
 			TextBox editor = (TextBox)sender;
-			Panel column = (Panel)editor.Parent;
-			FrameworkElement label = (FrameworkElement)column.Children[0];
+			Panel cell = (Panel)editor.Parent;
+			FrameworkElement label = (FrameworkElement)cell.Children[0];
 
 			editor.Visibility = Visibility.Collapsed;
 			label.Visibility = Visibility.Visible;
+		}
+
+		private void Editor_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter)
+			{
+				FrameworkElement editor = (FrameworkElement)sender;
+				editor.Visibility = Visibility.Collapsed;
+
+				e.Handled = true;
+			}
+			else if (e.Key == Key.Escape)
+			{
+				TextBox editor = (TextBox)sender;
+				Panel cell = (Panel)editor.Parent;
+				TextBlock label = (TextBlock)cell.Children[0];
+
+				editor.Text = label.Text;
+				editor.Visibility = Visibility.Collapsed;
+
+				e.Handled = true;
+			}
 		}
 
 	}

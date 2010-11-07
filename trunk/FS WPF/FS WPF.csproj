@@ -66,6 +66,10 @@
     <Compile Include="Converters\Bool2Visibility.cs" />
     <Compile Include="Converters\IconConverter.cs" />
     <Compile Include="Converters\IconVisibility.cs" />
+    <Compile Include="Converters\TextBold.cs" />
+    <Compile Include="Converters\TextItalic.cs" />
+    <Compile Include="Converters\TextLines.cs" />
+    <Compile Include="Converters\TextSize.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -100,14 +104,14 @@
       <Project>{E1302F16-C1FA-44A6-8B95-0A509291BEDA}</Project>
       <Name>FS Lib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FS Store XML\FS Store XML.csproj">
+      <Project>{C3EE49F3-5E6D-4A37-B6AC-074616C327CE}</Project>
+      <Name>FS Store XML</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TreeListView\TreeListView.csproj">
       <Project>{59A4159D-1038-4770-91DF-154A22CDE411}</Project>
       <Name>TreeListView</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="img\empty.bmp" />
-    <Resource Include="img\icon.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
